@@ -1,0 +1,46 @@
+{
+    "name": "saml",
+    "condition": "${matches(request.uri.path, '^/saml')}",
+    "handler": {
+        "type": "Chain",
+        "config": {
+            "filters": [
+                {
+                    "name": "SAMLAG",
+                    "type": "ScriptableFilter",
+                    "config": {
+                        "type": "application/x-groovy",
+                        "file": "samlag.groovy",
+                        "args": {
+                            "homeUrl": "http://localhost:8080",
+                            "targetUrl": "https://openam.example.com",
+                            "certAlias": "signature_key",
+                            "cert": "-----BEGIN CERTIFICATE-----\nMIICHDCCAYWgAwIBAgIEFQUoJjANBgkqhkiG9w0BAQsFADBBMQswCQYDVQQGEwJG\nUjEVMBMGA1UEChMMRXhhbXBsZSBDb3JwMRswGQYDVQQDExJvcGVuaWcuZXhhbXBs\nZS5jb20wHhcNMjAwNDAzMTg0ODQ4WhcNMjAwNzAyMTg0ODQ4WjBBMQswCQYDVQQG\nEwJGUjEVMBMGA1UEChMMRXhhbXBsZSBDb3JwMRswGQYDVQQDExJvcGVuaWcuZXhh\nbXBsZS5jb20wgZ8wDQYJKoZIhvcNAQEBBQADgY0AMIGJAoGBAIfCDr6gOjthQhcc\nKzp07Fj0F0MajqXRL4GtDTplciQmipcQvLr/tCnlxXsXMhQ9wtLvvQrKf4EwKTT5\nZv+FEqNqd73ahHnmXg0hwrrowSULAKtBuU+ObTq0fluJcl3FeX5CgQWv0Sk2l9b3\nKquqCj+APKKuW92hz3vfoPO6JVU/AgMBAAGjITAfMB0GA1UdDgQWBBQRIrHrSRlK\n9JV+aPi0YfuRnIH/OzANBgkqhkiG9w0BAQsFAAOBgQAFCSKWiR9HTTSP02mPagtc\nyJdGj2p8XU4F4w7NmEN5IZZv0x4xzsdRTg4V/D403imehyrfBbwJubOIlMQi3Gof\nt7jSQkitSHzTFk7O3xUrKDsgzrikdismeKE5iDoYwosQ770sRfGDLoLIDw2zsid4\n0iuNUtE6ML5sJ/uqCmZKyw==\n-----END CERTIFICATE-----\n",
+                            "userInfo": {
+                                "givenName": "Jake",
+                                "sn": "Feasel",
+                                "mail": "jake.feasel@forgerock.com",
+                                "id": "123456789"
+                            }
+                        }
+                    }
+                }
+            ],
+            "handler": {
+                 "name": "static",
+                 "type":"StaticResponseHandler",
+                 "config": {
+                    "status": 200,
+                    "entity": "<html>
+                               <h2>SAML Sample
+                               <form action='https://openam.example.com' method='POST'>
+                                   <input type='hidden' name='saml' value='${attributes.assertion}'/>
+                                   <input type='submit' value='Login'/>
+                               </form></h2>
+                               </html>"
+                 }
+            }
+
+        }
+    }
+}
